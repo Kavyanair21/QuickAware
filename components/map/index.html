@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Earthquake Simulation VR Demo</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.121/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
+    html, body, #cesiumContainer {
+      width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+    }
+    #ui {
+      position: absolute; top: 10px; left: 10px; z-index: 1000;
+      background: rgba(0,0,0,0.6); color: white; padding: 12px; border-radius: 8px;
+      font-family: sans-serif;
+    }
+    #ui button, #ui select {
+      margin-top: 5px; margin-right: 5px;
+      padding: 5px; border-radius: 5px; border: none; cursor: pointer;
+    }
+    #ui div#quakeInfo {
+      margin-top: 10px;
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <div id="ui">
+    <label>Select Earthquake:</label>
+    <select id="quakeSelect"></select><br>
+    <button onclick="flyToEarthquake()">Fly to Location</button>
+    <button onclick="startEarthquake()">Trigger Earthquake</button>
+    <div id="quakeInfo"></div>
+  </div>
+
+  <script>
+    async function initCesium() {
+      // ✅ Cesium Ion Token
+      Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwZjM5NjFmNC00NmZhLTQyNjItYjJiNC0zMDhiM2VmMzllYWUiLCJpZCI6MzQwODQ3LCJpYXQiOjE3NTc2OTc4Nzh9.yaXktTMq8-1VixN4AJnrTM_5Y4vNwX0dLGKH5z7c8aI";
+
+      // 1. Create Cesium viewer
+      window.viewer = new Cesium.Viewer("cesiumContainer", {
+        terrainProvider: await Cesium.createWorldTerrainAsync(),
+        animation: false,
+        timeline: false,
+      });
+
+      // 2. Add a sample building
+      window.building = viewer.entities.add({
+        name: "Sample Building",
+        position: Cesium.Cartesian3.fromDegrees(139.6917, 35.6895, 100),
+        model: {
+          uri: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf",
+          scale: 50,
+        }
+      });
+
+      // 3. Earthquake data
+      window.earthquakes = [
+        {
+          name: "Valdivia, Chile 1960",
+          lat: -39.8,
+          lon: -73.2,
+          magnitude: 9.5,
+          description: "Largest recorded earthquake in history. Caused by subduction of the Nazca Plate beneath the South American Plate."
+        },
+        {
+          name: "Kamchatka, Russia 2023",
+          lat: 52.5,
+          lon: 160.0,
+          magnitude: 7.8,
+          description: "Triggered by the Pacific Plate subduction. Strong shaking affected coastal settlements."
+        }
+      ];
+
+      // Populate select dropdown
+      const quakeSelect = document.getElementById("quakeSelect");
+      window.earthquakes.forEach((eq, index) => {
+        let option = document.createElement("option");
+        option.value = index;
+        option.text = `${eq.name} (M${eq.magnitude})`;
+        quakeSelect.add(option);
+      });
+
+      window.quakeActive = false;
+
+      // 4. Fly to selected earthquake
+      window.flyToEarthquake = function() {
+        const eq = window.earthquakes[quakeSelect.value];
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(eq.lon, eq.lat, 4000),
+          duration: 3
+        });
+
+        // Show earthquake info
+        document.getElementById("quakeInfo").innerHTML = `
+          <strong>${eq.name}</strong><br>
+          Magnitude: ${eq.magnitude}<br>
+          ${eq.description}
+        `;
+
+        // Add a red marker
+        viewer.entities.add({
+          position: Cesium.Cartesian3.fromDegrees(eq.lon, eq.lat, 0),
+          point: { pixelSize: 15, color: Cesium.Color.RED }
+        });
+      };
+
+      // 5. Earthquake simulation
+      window.startEarthquake = function() {
+        const eq = window.earthquakes[quakeSelect.value];
+        const intensity = eq.magnitude / 10;
+        quakeActive = true;
+        const startTime = Date.now();
+
+        viewer.scene.postRender.addEventListener(() => {
+          if (!quakeActive) return;
+          let t = (Date.now() - startTime) / 1000;
+
+          // Camera shake
+          viewer.scene.camera.moveUp(Math.sin(t * 50) * 0.5 * intensity);
+
+          // Building collapse
+          if (t > 3 && building) {
+            const pos = building.position.getValue(Cesium.JulianDate.now());
+            const carto = Cesium.Cartographic.fromCartesian(pos);
+            const newHeight = Math.max(0, carto.height - 2 * intensity);
+            building.position = Cesium.Cartesian3.fromRadians(carto.longitude, carto.latitude, newHeight);
+          }
+
+          // Smog/dust overlay
+          if (t > 5) {
+            viewer.entities.add({
+              position: Cesium.Cartesian3.fromDegrees(eq.lon, eq.lat, 500),
+              ellipse: {
+                semiMinorAxis: 2000 * intensity,
+                semiMajorAxis: 2000 * intensity,
+                height: 500,
+                material: new Cesium.Color(0.5, 0.5, 0.5, 0.3)
+              }
+            });
+            quakeActive = false;
+          }
+        });
+      };
+    }
+
+    // Initialize Cesium
+    initCesium();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,359 @@
+// Disaster Awareness Landing Page (React)
+// Save these files into a React project (Vite recommended).
+// Files contained below. After saving, run `npm install` and `npm run dev`.
+
+// File: package.json
+{
+  "name": "disaster-awareness-landing",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "vite": "5.2.0",
+    "@types/react": "18.2.21",
+    "@types/react-dom": "18.2.7",
+    "typescript": "5.6.2"
+  }
+}
+
+
+// File: index.html
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>QuakeAware — Disaster Awareness App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+// File: src/main.tsx
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App'
+import './styles.css'
+
+createRoot(document.getElementById('root')!).render(<App />)
+
+
+// File: src/App.tsx
+import React from 'react'
+import Hero from './components/Hero'
+import About from './components/About'
+import Causes from './components/Causes'
+import Solutions from './components/Solutions'
+import Gallery from './components/Gallery'
+import Footer from './components/Footer'
+
+export default function App(){
+  return (
+    <div className="site-root">
+      <Hero />
+      <main>
+        <About />
+        <Causes />
+        <Solutions />
+        <Gallery />
+      </main>
+      <Footer />
+    </div>
+  )
+}
+
+
+// File: src/components/Hero.tsx
+import React from 'react'
+
+export default function Hero(){
+  return (
+    <header className="hero">
+      <nav className="nav">
+        <div className="brand">Quake<span>Aware</span></div>
+        <div className="nav-links">
+          <a href="#about">About</a>
+          <a href="#causes">Causes</a>
+          <a href="#solutions">Solutions</a>
+          <a href="#gallery">Gallery</a>
+          <a className="cta" href="/simulator">Open Simulator</a>
+        </div>
+      </nav>
+
+      <div className="hero-inner">
+        <div className="hero-left">
+          <h1>QuakeAware — Earthquake Disaster Awareness</h1>
+          <p>Interactive learning & immersive VR gallery to understand earthquakes: what causes them, what happens to cities, and how to survive & build safer communities.</p>
+
+          <div className="hero-cta">
+            <a className="btn primary" href="/simulator">Launch 3D Simulator</a>
+            <a className="btn ghost" href="#gallery">Explore Gallery</a>
+          </div>
+
+          <ul className="features">
+            <li>Interactive 3D city simulator</li>
+            <li>Live seismograph & sound</li>
+            <li>WebVR Awareness Room & bunker demo</li>
+          </ul>
+        </div>
+
+        <div className="hero-right">
+          <div className="device-mock">
+            <div className="scene-preview">
+              {/* simple CSS/HTML 3D preview - placeholder for embedded threejs canvas */}
+              <div className="building-stack">
+                <div className="tower tower-tall" />
+                <div className="tower tower-med" />
+                <div className="tower tower-short" />
+              </div>
+              <div className="quake-wave" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="hero-wave" aria-hidden />
+    </header>
+  )
+}
+
+
+// File: src/components/About.tsx
+import React from 'react'
+
+export default function About(){
+  return (
+    <section id="about" className="section about">
+      <div className="container">
+        <h2>About the Project</h2>
+        <p>QuakeAware is an interactive web app built to educate communities about earthquake hazards. It demonstrates the causes, shows realistic city-level impacts using a 3D simulator, and provides practical solutions: safe building practices, emergency planning, and an immersive WebVR gallery that simulates shelters and bunkers.</p>
+
+        <div className="cards">
+          <div className="card">
+            <h3>Learn</h3>
+            <p>Short interactive lessons on seismic science, fault lines, and why earthquakes happen.</p>
+          </div>
+          <div className="card">
+            <h3>Experience</h3>
+            <p>3D interactive simulator to visualize shaking, collapse risk, and safe spots indoors.</p>
+          </div>
+          <div className="card">
+            <h3>Prepare</h3>
+            <p>Tips, checklists and a simulated bunker/evacuation room in WebVR for training.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+// File: src/components/Causes.tsx
+import React from 'react'
+
+const causeItems = [
+  {title: 'Tectonic Plate Movement', text: 'Most earthquakes are caused by the sudden release of stress along fault lines when tectonic plates shift.'},
+  {title: 'Volcanic Activity', text: 'Volcanic eruptions can trigger earthquakes locally as magma moves.'},
+  {title: 'Human Activity', text: 'Large reservoirs, mining, and some industrial activities can induce seismicity.'}
+]
+
+export default function Causes(){
+  return (
+    <section id="causes" className="section causes">
+      <div className="container">
+        <h2>Causes of Earthquakes</h2>
+        <div className="cause-grid">
+          {causeItems.map((c)=>(
+            <article className="cause" key={c.title}>
+              <h3>{c.title}</h3>
+              <p>{c.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+// File: src/components/Solutions.tsx
+import React from 'react'
+
+export default function Solutions(){
+  return (
+    <section id="solutions" className="section solutions">
+      <div className="container">
+        <h2>Solutions & Awareness</h2>
+        <p>Our solution is multi-layered: education, engineering, and immersive training.</p>
+
+        <div className="solution-grid">
+          <div className="solution-card">
+            <h3>Engineering</h3>
+            <p>Seismic-resistant design, base isolation, retrofitting old buildings.</p>
+          </div>
+          <div className="solution-card">
+            <h3>Preparation</h3>
+            <p>Emergency kits, evacuation plans, community drills.</p>
+          </div>
+          <div className="solution-card">
+            <h3>Awareness Room (WebVR)</h3>
+            <p>An art-gallery-like VR room showcasing scenarios, safe practices, and a simulated bunker where users can interact and learn.</p>
+            <a className="btn small" href="/vr-room">Enter VR Room</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+// File: src/components/Gallery.tsx
+import React from 'react'
+
+const galleryItems = [
+  {title: 'Before: Stable City', desc: 'A calm metropolitan area before shaking.'},
+  {title: 'During: Peak Shaking', desc: 'Buildings sway, learn where to shelter.'},
+  {title: 'After: Rescue & Recovery', desc: 'Post-quake procedures and rebuilding.'}
+]
+
+export default function Gallery(){
+  return (
+    <section id="gallery" className="section gallery">
+      <div className="container">
+        <h2>Awareness Gallery</h2>
+        <p>Walk through curated scenes that explain the lifecycle of an earthquake event.</p>
+
+        <div className="gallery-grid">
+          {galleryItems.map(g=> (
+            <div className="gallery-card" key={g.title}>
+              <div className="thumb" aria-hidden />
+              <h3>{g.title}</h3>
+              <p>{g.desc}</p>
+              <a className="btn small" href="/gallery/" onClick={(e)=>{e.preventDefault(); alert('Open interactive gallery (placeholder)')}}>Open</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+// File: src/components/Footer.tsx
+import React from 'react'
+
+export default function Footer(){
+  return (
+    <footer className="site-footer">
+      <div className="container">
+        <div>© {new Date().getFullYear()} QuakeAware — Built for awareness & education</div>
+        <div className="footer-links">
+          <a href="#about">About</a>
+          <a href="#solutions">Solutions</a>
+          <a href="#gallery">Gallery</a>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+
+// File: src/styles.css
+:root{
+  --bg:#0f1724; --card:#0b1220; --accent:#ff6b6b; --muted:#94a3b8; --glass: rgba(255,255,255,0.04);
+  --max-width:1100px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,#071023 0%, #091426 60%);color:#e6eef6}
+.container{max-width:var(--max-width);margin:0 auto;padding:28px}
+
+/* NAV & HERO */
+.nav{display:flex;justify-content:space-between;align-items:center;padding:18px 28px}
+.brand{font-weight:800;font-size:20px;color:var(--accent)}
+.brand span{color:#9ad0ff}
+.nav-links a{color:var(--muted);margin-left:18px;text-decoration:none}
+.nav-links .cta{background:var(--accent);color:#081024;padding:8px 12px;border-radius:8px}
+
+.hero{position:relative;padding:24px 0 80px}
+.hero-inner{display:flex;gap:36px;align-items:center;justify-content:space-between;max-width:var(--max-width);margin:24px auto}
+.hero-left{flex:0 0 54%}
+.hero h1{font-size:44px;margin:0 0 12px;line-height:1.02}
+.hero p{color:var(--muted);font-size:16px}
+.hero-cta{margin-top:18px}
+.btn{display:inline-block;padding:10px 14px;border-radius:10px;text-decoration:none}
+.btn.primary{background:linear-gradient(90deg,var(--accent),#ffb86b);color:#051028}
+.btn.ghost{border:1px solid rgba(255,255,255,0.06);color:var(--muted);background:transparent;margin-left:8px}
+.btn.small{padding:8px 10px;font-size:13px}
+.features{margin:18px 0 0;padding:0;list-style:none;color:var(--muted)}
+.features li{margin-bottom:6px}
+
+.hero-right{flex:0 0 40%;display:flex;justify-content:center}
+.device-mock{width:320px;height:420px;background:linear-gradient(180deg,#071a2a,#04202f);border-radius:18px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
+.scene-preview{height:100%;position:relative;overflow:hidden;border-radius:12px;background:linear-gradient(180deg,#062232,#05202e)}
+.building-stack{position:absolute;left:20%;bottom:20%;display:flex;gap:6px;align-items:end}
+.tower{width:40px;border-radius:4px}
+.tower-tall{height:150px;background:linear-gradient(180deg,#2b3b4b,#1f2b34)}
+.tower-med{height:100px;background:linear-gradient(180deg,#374955,#26323b)}
+.tower-short{height:60px;background:linear-gradient(180deg,#465864,#35464f)}
+.quake-wave{position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,#ff6b6b,#ffd36b);opacity:0.06}
+
+.hero-wave{position:absolute;left:0;right:0;bottom:0;height:180px;background:radial-gradient(ellipse at center,#07203400 0%, #071023CC 60%);pointer-events:none}
+
+/* SECTIONS */
+.section{padding:48px 0}
+.section h2{font-size:28px;margin-bottom:6px}
+.section p{color:var(--muted)}
+.cards{display:flex;gap:18px;margin-top:20px}
+.card{background:var(--card);padding:18px;border-radius:12px;flex:1}
+.card h3{margin:0 0 8px}
+
+.cause-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}
+.cause{background:var(--glass);padding:18px;border-radius:10px}
+
+.solution-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}
+.solution-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-top:18px}
+.gallery-card{background:linear-gradient(180deg,#0b1620,#09121a);padding:14px;border-radius:10px}
+.gallery-card .thumb{height:120px;border-radius:8px;background:linear-gradient(90deg,#123 20%, #234 100%);margin-bottom:10px}
+
+/* FOOTER */
+.site-footer{padding:22px 0;background:transparent;border-top:1px solid rgba(255,255,255,0.03);color:var(--muted)}
+.site-footer .footer-links a{margin-left:12px;color:var(--muted);text-decoration:none}
+
+/* Responsive */
+@media (max-width:900px){
+  .hero-inner{flex-direction:column;padding:12px}
+  .hero-right{order:-1}
+}
+
+
+// File: README.md
+# QuakeAware — Landing Frontend
+
+This is a static frontend for the disaster awareness app (earthquake). It is built with plain React + CSS and designed to be creative, modern and easy to extend.
+
+## Run locally (Vite)
+1. Create project folder and save files.
+2. `npm install`
+3. `npm run dev`
+4. Open the URL shown by Vite (usually http://localhost:5173)
+
+## Integrations
+- Link `/simulator` to your React Three Fiber simulator route or external deployment.
+- Link `/vr-room` to your WebVR experience (A-Frame / WebXR deploy).
+
+
+// End of files
+
